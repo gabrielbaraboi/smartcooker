@@ -92,7 +92,7 @@ export default function App() {
 			<View style={styles.container}>
 				<Text>
 					You have not granted permission to use the camera on this
-					device!
+					device!!
 				</Text>
 				<Button
 					onPress={requestPermission}
