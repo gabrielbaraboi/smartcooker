@@ -10,6 +10,7 @@ import BackButton from "../../components/BackButton";
 import { theme } from "../../core/theme";
 import { emailValidator } from "../../utils/emailValidator";
 import { passwordValidator } from "../../utils/passwordValidator";
+import { login } from "../../services/auth.service";
 
 const LoginScreen = ({ navigation }) => {
 	const [email, setEmail] = useState({ value: "", error: "" });
@@ -23,10 +24,20 @@ const LoginScreen = ({ navigation }) => {
 			setPassword({ ...password, error: passwordError });
 			return;
 		}
-		navigation.reset({
-			index: 0,
-			routes: [{ name: "HomeScreen" }],
-		});
+		const data = {
+			email: email.value,
+			password: password.value,
+		};
+		login(data)
+			.then(() => {
+				navigation.reset({
+					index: 0,
+					routes: [{ name: "HomeScreen" }],
+				});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
 
 	return (

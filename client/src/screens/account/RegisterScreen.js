@@ -11,6 +11,7 @@ import { theme } from "../../core/theme";
 import { emailValidator } from "../../utils/emailValidator";
 import { passwordValidator } from "../../utils/passwordValidator";
 import { nameValidator } from "../../utils/nameValidator";
+import { register } from "../../services/auth.service";
 
 const RegisterScreen = ({ navigation }) => {
 	const [name, setName] = useState({ value: "", error: "" });
@@ -27,10 +28,22 @@ const RegisterScreen = ({ navigation }) => {
 			setPassword({ ...password, error: passwordError });
 			return;
 		}
-		navigation.reset({
-			index: 0,
-			routes: [{ name: "Dashboard" }],
-		});
+		const data = {
+			email: email.value,
+			password: password.value,
+			username: name.value,
+		};
+
+		register(data)
+			.then(() => {
+				navigation.reset({
+					index: 0,
+					routes: [{ name: "LoginScreen" }],
+				});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
 
 	return (
