@@ -6,20 +6,16 @@ import Logo from "../components/Logo";
 import Header from "../components/Header";
 import Paragraph from "../components/Paragraph";
 import Button from "../components/Button";
+import { AuthContext } from "../services/authentication/auth.provider";
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = () => {
 	const [user, setUser] = useState({});
+	const { setIsLoggedIn } = React.useContext(AuthContext);
 
-	// const getData = async () => {
-	// 	try {
-	// 		const value = await AsyncStorage.getItem("user");
-	// 		if (value !== null) {
-	// 			setUser(value);
-	// 		}
-	// 	} catch (e) {
-	// 		// error reading value
-	// 	}
-	// };
+	const logout = async () => {
+		await AsyncStorage.removeItem("user");
+		setIsLoggedIn(false);
+	};
 
 	const getData = async () => {
 		try {
@@ -41,15 +37,7 @@ const HomeScreen = ({ navigation }) => {
 			<Logo />
 			<Header>Let’s start</Header>
 			<Paragraph>Hello, {user.username}</Paragraph>
-			<Button
-				mode="outlined"
-				onPress={() =>
-					navigation.reset({
-						index: 0,
-						routes: [{ name: "AccountScreen" }],
-					})
-				}
-			>
+			<Button mode="outlined" onPress={logout}>
 				Logout
 			</Button>
 		</Background>

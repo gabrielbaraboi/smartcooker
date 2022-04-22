@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
 	background: {
 		flex: 1,
 		justifyContent: "center",
+		backgroundColor: theme.colors.background,
 	},
 	container: {
 		flex: 1,

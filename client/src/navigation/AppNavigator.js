@@ -5,10 +5,11 @@ import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SettingsScreen from "../screens/SettingsScreen";
+import { theme } from "../core/theme";
 
 const TAB_ICON = {
 	Home: "home",
-	Profile: "person-outline",
+	Profile: "person",
 	Settings: "settings",
 };
 
@@ -29,8 +30,8 @@ const AppNavigator = () => {
 		<Tab.Navigator
 			screenOptions={createScreenOptions}
 			tabBarOptions={{
-				activeTintColor: "#e91e63",
-				inactiveTintColor: "gray",
+				activeTintColor: theme.colors.primary,
+				inactiveTintColor: "#858585",
 				showLabel: false,
 				style: {
 					backgroundColor: "#fff",

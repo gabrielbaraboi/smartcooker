@@ -11,7 +11,7 @@ import { theme } from "../../core/theme";
 import { emailValidator } from "../../utils/emailValidator";
 import { passwordValidator } from "../../utils/passwordValidator";
 import { nameValidator } from "../../utils/nameValidator";
-import { register } from "../../services/auth.service";
+import { register } from "../../services/authentication/auth.service";
 
 const RegisterScreen = ({ navigation }) => {
 	const [name, setName] = useState({ value: "", error: "" });

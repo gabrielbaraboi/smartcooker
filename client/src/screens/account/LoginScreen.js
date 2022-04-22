@@ -7,14 +7,18 @@ import Header from "../../components/Header";
 import Button from "../../components/Button";
 import TextInput from "../../components/TextInput";
 import BackButton from "../../components/BackButton";
+import Error from "../../components/Error";
 import { theme } from "../../core/theme";
 import { emailValidator } from "../../utils/emailValidator";
 import { passwordValidator } from "../../utils/passwordValidator";
-import { login } from "../../services/auth.service";
+import { login } from "../../services/authentication/auth.service";
+import { AuthContext } from "../../services/authentication/auth.provider";
 
 const LoginScreen = ({ navigation }) => {
 	const [email, setEmail] = useState({ value: "", error: "" });
 	const [password, setPassword] = useState({ value: "", error: "" });
+	const [error, setError] = useState("");
+	const { setIsLoggedIn } = React.useContext(AuthContext);
 
 	const onLoginPressed = () => {
 		const emailError = emailValidator(email.value);
@@ -30,13 +34,11 @@ const LoginScreen = ({ navigation }) => {
 		};
 		login(data)
 			.then(() => {
-				navigation.reset({
-					index: 0,
-					routes: [{ name: "HomeScreen" }],
-				});
+				setIsLoggedIn(true);
 			})
 			.catch((err) => {
-				console.log(err);
+				setError(err.response.data.message);
+				console.log(error);
 			});
 	};
 
@@ -73,6 +75,7 @@ const LoginScreen = ({ navigation }) => {
 					<Text style={styles.forgot}>Forgot your password?</Text>
 				</TouchableOpacity>
 			</View>
+			<Error errorText={error} />
 			<Button mode="contained" onPress={onLoginPressed}>
 				Login
 			</Button>

@@ -13,7 +13,12 @@ export default function Button({ mode, style, ...props }) {
 				},
 				style,
 			]}
-			labelStyle={styles.text}
+			labelStyle={[
+				styles.text,
+				mode === "outlined" && {
+					color: theme.colors.primary,
+				},
+			]}
 			mode={mode}
 			{...props}
 		/>
@@ -25,10 +30,12 @@ const styles = StyleSheet.create({
 		width: "100%",
 		marginVertical: 10,
 		paddingVertical: 2,
+		backgroundColor: theme.colors.primary,
 	},
 	text: {
 		fontWeight: "bold",
 		fontSize: 15,
 		lineHeight: 26,
+		color: theme.colors.surface,
 	},
 });

@@ -57,6 +57,15 @@ const loginUser = async (req, res) => {
 	}
 };
 
+const getAllUsers = async (req, res) => {
+	try {
+		const users = await User.find({});
+		res.status(200).json({ users });
+	} catch (err) {
+		console.log(err);
+	}
+};
+
 async function encryptPass(pass) {
 	encryptedPassword = await bcrypt.hash(pass, 10);
 	return encryptedPassword;
@@ -79,4 +88,5 @@ async function isEmailAlreadyUsed(email) {
 module.exports = {
 	registerUser,
 	loginUser,
+	getAllUsers,
 };
