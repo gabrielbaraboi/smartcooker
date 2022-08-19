@@ -12,11 +12,13 @@ import { emailValidator } from "../../utils/emailValidator";
 import { passwordValidator } from "../../utils/passwordValidator";
 import { nameValidator } from "../../utils/nameValidator";
 import { register } from "../../services/authentication/auth.service";
+import Paragraph from "../../components/Paragraph";
 
 const RegisterScreen = ({ navigation }) => {
 	const [name, setName] = useState({ value: "", error: "" });
 	const [email, setEmail] = useState({ value: "", error: "" });
 	const [password, setPassword] = useState({ value: "", error: "" });
+	const [error, setError] = useState("");
 
 	const onSignUpPressed = () => {
 		const nameError = nameValidator(name.value);
@@ -42,7 +44,8 @@ const RegisterScreen = ({ navigation }) => {
 				});
 			})
 			.catch((err) => {
-				console.log(err);
+				console.log(err.response.data.message);
+				setError(err.response.data.message);
 			});
 	};
 
@@ -80,6 +83,7 @@ const RegisterScreen = ({ navigation }) => {
 				errorText={password.error}
 				secureTextEntry
 			/>
+			{!!error && <Paragraph>{error}</Paragraph>}
 			<Button
 				mode="contained"
 				onPress={onSignUpPressed}

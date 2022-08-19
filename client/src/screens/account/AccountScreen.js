@@ -4,8 +4,12 @@ import Header from "../../components/Header";
 import Paragraph from "../../components/Paragraph";
 import Button from "../../components/Button";
 import Logo from "../../components/Logo";
+import { guestLogin } from "../../services/authentication/auth.service";
+import { AuthContext } from "../../services/authentication/auth.provider";
 
 const AccountScreen = ({ navigation }) => {
+	const { setIsLoggedIn } = React.useContext(AuthContext);
+
 	return (
 		<Background>
 			<Logo />
@@ -16,6 +20,21 @@ const AccountScreen = ({ navigation }) => {
 				onPress={() => navigation.navigate("LoginScreen")}
 			>
 				Login
+			</Button>
+			<Button
+				mode="outlined"
+				onPress={() =>
+					guestLogin()
+						.then(() => {
+							setIsLoggedIn(true);
+						})
+						.catch((err) => {
+							// setError(err.response.data.message);
+							console.log(error);
+						})
+				}
+			>
+				Guest Login
 			</Button>
 			<Button
 				mode="outlined"
