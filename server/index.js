@@ -13,8 +13,10 @@ const listener = app.listen(7055, function () {
 });
 
 const authenticantion = require("./routes/authRoutes");
+const image = require("./routes/imageRoutes");
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "50mb" }));
+// app.use(bodyParser({ limit: "50mb" }));
 app.use(express.json());
 app.use(
 	cors({
@@ -25,5 +27,6 @@ app.use(
 app.use(cookieParser());
 
 app.use("/auth", authenticantion);
+app.use("/img", image);
 
 module.exports = app;

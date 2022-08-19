@@ -1,45 +1,26 @@
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import { Button, Image, Linking, StyleSheet, Text, View } from "react-native";
-
-const API_KEY = "AIzaSyDcJZnegbMfswtu8LVCl8vuC3Eiwohxz4g";
-const API_URL = `https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}`;
-
-async function callGoogleVisionAsync(image) {
-	const body = {
-		requests: [
-			{
-				image: {
-					content: image,
-				},
-				features: [
-					{
-						type: "OBJECT_LOCALIZATION",
-						maxResults: 10,
-					},
-				],
-			},
-		],
-	};
-
-	const response = await fetch(API_URL, {
-		method: "POST",
-		headers: {
-			Accept: "application/json",
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(body),
-	});
-	const parsed = await response.json();
-
-	console.log("Result:", parsed);
-
-	return parsed.responses[0].localizedObjectAnnotations[0].name;
-}
+import axios from "axios";
 
 function VisionScreen() {
 	const [image, setImage] = useState(null);
 	const [status, setStatus] = useState(null);
+
+	const predict = async (data) => {
+		try {
+			const res = await axios.post(
+				"http://192.168.1.183:7055/img/predict",
+				{
+					withCredentials: true,
+					image: data,
+				},
+			);
+			return res.data;
+		} catch (err) {
+			throw err;
+		}
+	};
 
 	const takePictureAsync = async () => {
 		const { cancelled, uri, base64 } = await ImagePicker.launchCameraAsync({
@@ -49,7 +30,7 @@ function VisionScreen() {
 			setImage(uri);
 			setStatus("Loading...");
 			try {
-				const result = await callGoogleVisionAsync(base64);
+				const result = await predict(base64);
 				setStatus(result);
 			} catch (error) {
 				console.log(error);
@@ -65,9 +46,8 @@ function VisionScreen() {
 		const { cancelled, uri, base64 } =
 			await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ImagePicker.MediaTypeOptions.Images,
-				allowsEditing: true,
-				aspect: [4, 3],
-				quality: 1,
+				// allowsEditing: true,
+				quality: 0.5,
 				base64: true,
 			});
 
@@ -75,9 +55,15 @@ function VisionScreen() {
 			setImage(uri);
 			setStatus("Loading...");
 			try {
-				const result = await callGoogleVisionAsync(base64);
-				setStatus(result);
-				console.log(result);
+				await predict(base64)
+					.then((result) => {
+						setStatus(result[0]);
+						console.log(result[0]);
+					})
+					.catch((error) => {
+						console.log(error);
+						setStatus(`Error: ${error.message}`);
+					});
 			} catch (error) {
 				console.log(error);
 				setStatus(`Error: ${error.message}`);
