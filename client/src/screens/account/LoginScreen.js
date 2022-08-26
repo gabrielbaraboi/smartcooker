@@ -11,7 +11,7 @@ import Error from "../../components/Error";
 import { theme } from "../../core/theme";
 import { emailValidator } from "../../utils/emailValidator";
 import { passwordValidator } from "../../utils/passwordValidator";
-import { login } from "../../services/authentication/auth.service";
+import { login } from "../../services/authentication/authService";
 import { AuthContext } from "../../services/authentication/auth.provider";
 
 const LoginScreen = ({ navigation }) => {

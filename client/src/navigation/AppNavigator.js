@@ -4,15 +4,16 @@ import { Ionicons } from "@expo/vector-icons";
 
 import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
-import SettingsScreen from "../screens/SettingsScreen";
-import TestScreen from "../screens/TestScreen";
 import UploadImageScreen from "../screens/UploadImageScreen";
 import { StyleSheet } from "react-native";
 import { theme } from "../core/theme";
+import { createStackNavigator } from "@react-navigation/stack";
+import RecommendationScreen from "../screens/RecommendationScreen";
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-const AppNavigator = () => {
+const Home = () => {
 	return (
 		<Tab.Navigator
 			screenOptions={({ route }) => ({
@@ -23,10 +24,6 @@ const AppNavigator = () => {
 						iconName = focused ? "home" : "home-outline";
 					} else if (route.name === "Profile") {
 						iconName = focused ? "person" : "person-outline";
-					} else if (route.name === "Settings") {
-						iconName = focused ? "settings" : "settings-outline";
-					} else if (route.name === "Test") {
-						iconName = focused ? "flask" : "flask-outline";
 					} else if (route.name === "Upload Image") {
 						iconName = "camera";
 						size = size * 1;
@@ -53,7 +50,6 @@ const AppNavigator = () => {
 			})}
 		>
 			<Tab.Screen name="Home" component={HomeScreen} />
-			<Tab.Screen name="Profile" component={ProfileScreen} />
 			<Tab.Screen
 				name="Upload Image"
 				component={UploadImageScreen}
@@ -69,9 +65,25 @@ const AppNavigator = () => {
 					},
 				}}
 			/>
-			<Tab.Screen name="Test" component={TestScreen} />
-			<Tab.Screen name="Settings" component={SettingsScreen} />
+			<Tab.Screen name="Profile" component={ProfileScreen} />
 		</Tab.Navigator>
+	);
+};
+
+const AppNavigator = () => {
+	return (
+		<Stack.Navigator>
+			<Stack.Screen
+				name="Home"
+				component={Home}
+				options={{ headerShown: false }}
+			/>
+			<Stack.Screen
+				name="RecommendationScreen"
+				component={RecommendationScreen}
+			/>
+			{/* <Stack.Screen name="Settings" component={Settings} /> */}
+		</Stack.Navigator>
 	);
 };
 

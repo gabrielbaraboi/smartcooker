@@ -14,9 +14,17 @@ const listener = app.listen(7055, function () {
 
 const authenticantion = require("./routes/authRoutes");
 const image = require("./routes/imageRoutes");
+const ingredient = require("./routes/ingredientRoutes");
+const recipe = require("./routes/recipeRoutes");
 
-app.use(bodyParser.json({ limit: "50mb" }));
-// app.use(bodyParser({ limit: "50mb" }));
+app.use(bodyParser.json({ limit: "15mb" })); //Whatever size you feel you require
+app.use(
+	bodyParser.urlencoded({
+		limit: "15mb",
+		extended: true,
+		parameterLimit: 1000000, //Amount of parameters you feel is required
+	}),
+);
 app.use(express.json());
 app.use(
 	cors({
@@ -28,5 +36,7 @@ app.use(cookieParser());
 
 app.use("/auth", authenticantion);
 app.use("/img", image);
+app.use("/ingredient", ingredient);
+app.use("/recipe", recipe);
 
 module.exports = app;

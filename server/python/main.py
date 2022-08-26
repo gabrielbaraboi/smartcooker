@@ -39,8 +39,18 @@ def predict_image(image_path):
     return index
 
 
-classes = ['Apple', 'Avocado', 'Banana', 'Eggplant', 'Lemon',
-           'Onion', 'Orange', 'Pepper', 'Potato', 'Tomato']
+classes = {
+    0: 'Apple',
+    1: 'Avocado',
+    2: 'Banana',
+    3: 'Eggplant',
+    4: 'Lemon',
+    5: 'Onion',
+    6: 'Orange',
+    7: 'Pepper',
+    8: 'Potato',
+    9: 'Tomato'
+}
 
 im_b64 = sys.argv[1]
 # im_b64 = im_b64.split(',')[1]
@@ -50,5 +60,5 @@ im_b64 = Image.open(im_b64)
 image = im_b64.convert('RGB')
 
 prediction = predict_image(image)
-print(classes[prediction])
+print(prediction)
 sys.stdout.flush()

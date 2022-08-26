@@ -89,9 +89,13 @@ async function encryptPass(pass) {
 }
 
 function generateToken(accType) {
-	const token = jwt.sign({ _id: accType.id }, process.env.TOKEN_KEY, {
-		expiresIn: 86400,
-	});
+	const token = jwt.sign(
+		{ _id: accType.id, role: accType.role },
+		process.env.TOKEN_KEY,
+		{
+			expiresIn: 86400,
+		},
+	);
 	return token;
 }
 

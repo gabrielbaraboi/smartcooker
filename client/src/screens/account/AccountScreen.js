@@ -4,7 +4,7 @@ import Header from "../../components/Header";
 import Paragraph from "../../components/Paragraph";
 import Button from "../../components/Button";
 import Logo from "../../components/Logo";
-import { guestLogin } from "../../services/authentication/auth.service";
+import { guestLogin } from "../../services/authentication/authService";
 import { AuthContext } from "../../services/authentication/auth.provider";
 
 const AccountScreen = ({ navigation }) => {
