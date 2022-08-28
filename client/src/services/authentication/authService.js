@@ -41,3 +41,14 @@ export const register = async (data) => {
 		throw err;
 	}
 };
+
+export const authHeader = async () => {
+	const data = await AsyncStorage.getItem("user");
+	let user = JSON.parse(data);
+
+	if (user && user.accessToken) {
+		return { "x-access-token": user.accessToken };
+	} else {
+		return {};
+	}
+};

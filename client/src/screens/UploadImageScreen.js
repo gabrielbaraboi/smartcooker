@@ -82,6 +82,14 @@ function VisionScreen({ navigation }) {
 		setModalVisible(true);
 	};
 
+	function addPredictionsToArray() {
+		let array = [];
+		predictions.forEach((prediction) => {
+			array.push(ingredients[parseInt(prediction)]?.name);
+		});
+		return array;
+	}
+
 	return (
 		<View style={styles.container}>
 			<Modal
@@ -170,7 +178,7 @@ function VisionScreen({ navigation }) {
 				<Button
 					onPress={() =>
 						navigation.navigate("RecommendationScreen", {
-							predictions: predictions,
+							predictions: addPredictionsToArray(),
 						})
 					}
 					title="Search"

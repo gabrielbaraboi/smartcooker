@@ -1,4 +1,6 @@
 const Recipe = require("../models/Recipe");
+const Favorite = require("../models/Favorite");
+const User = require("../models/User");
 
 const filterRecipesByIngredients = async (req, res) => {
 	try {
@@ -7,19 +9,14 @@ const filterRecipesByIngredients = async (req, res) => {
 			ingredients = ingredients.split(",");
 		}
 
+		ingredients = [...new Set(ingredients)];
 		console.log(ingredients);
-
-		if (!ingredients) {
-			return res
-				.status(400)
-				.json({ message: "Ingredients are required!" });
-		}
-
 		const recipes = await Recipe.find({
 			ingredients_clean: { $in: ingredients },
 		});
 
 		const results = sortRecipes(recipes, ingredients);
+		console.log(results.length);
 
 		res.status(200).json(results.slice(0, 20));
 	} catch (err) {
@@ -56,9 +53,76 @@ function sortRecipes(recipes, ingredients) {
 	return results;
 }
 
-const getRecipes = async (req, res) => {
+const addFavorite = async (req, res) => {
 	try {
-		const recipes = await Recipe.find().sort({ rating: -1 });
+		const { recipeId } = req.body;
+		const userId = req.user._id;
+
+		const favorites = await Favorite.findOne({ user: userId });
+		if (favorites && favorites.favorites.includes(recipeId)) {
+			res.status(400).json({ message: "Recipe already in favorites!" });
+			return;
+		} else if (!favorites) {
+			const newFavorite = new Favorite({
+				user: userId,
+				favorites: [recipeId],
+			});
+			await newFavorite.save();
+		} else {
+			favorites.favorites.push(recipeId);
+			await favorites.save();
+		}
+		res.status(200).json({ message: "Favorite added!" });
+	} catch (err) {
+		console.log(err);
+		res.status(400).json({ message: "Failed to add recipe to favorites!" });
+	}
+};
+
+const getFavorites = async (req, res) => {
+	try {
+		const userId = req.user._id;
+		const favorites = await Favorite.findOne({ user: userId });
+		if (!favorites) {
+			res.status(200).json({ message: "No favorites found!" });
+		} else {
+			const recipes = await Recipe.find({
+				_id: { $in: favorites.favorites },
+			});
+			res.status(200).json(recipes);
+		}
+	} catch (err) {
+		console.log(err);
+		res.status(400).json({ message: "Get favorites failed!" });
+	}
+};
+
+const removeFavorite = async (req, res) => {
+	try {
+		const { recipeId } = req.body;
+		const userId = req.user._id;
+		const favorite = await Favorite.findOne({ user: userId });
+		if (!favorite) {
+			res.status(200).json({ message: "No favorites found!" });
+		} else {
+			const index = favorite.favorites.indexOf(recipeId);
+			favorite.favorites.splice(index, 1);
+			await favorite.save();
+			res.status(200).json({ message: "Favorite removed!" });
+		}
+	} catch (err) {
+		console.log(err);
+		res.status(400).json({ message: "Remove favorite failed!" });
+	}
+};
+
+const getRandomRecipes = async (req, res) => {
+	try {
+		const recipes = await Recipe.aggregate([
+			{
+				$sample: { size: 20 },
+			},
+		]);
 
 		res.status(200).json(recipes);
 	} catch (err) {
@@ -77,4 +141,23 @@ const countRecipes = async (req, res) => {
 	}
 };
 
-module.exports = { countRecipes, filterRecipesByIngredients, getRecipes };
+const getRecipeById = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const recipe = await Recipe.findById(id);
+		res.status(200).json(recipe);
+	} catch (err) {
+		console.log(err);
+		res.status(400).json({ message: "Get recipe failed!" });
+	}
+};
+
+module.exports = {
+	countRecipes,
+	filterRecipesByIngredients,
+	getRandomRecipes,
+	addFavorite,
+	getFavorites,
+	removeFavorite,
+	getRecipeById,
+};

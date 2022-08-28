@@ -2,25 +2,27 @@ import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { AuthContext } from "../services/authentication/auth.provider";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import Recipe from "../components/Recipe";
+import {
+	addFavorite,
+	getFavorites,
+	getRandomRecipes,
+	removeFavorite,
+} from "../services/recipeService";
+import { IconButton, Text } from "react-native-paper";
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
 	const [user, setUser] = useState({});
-	const { setIsLoggedIn } = React.useContext(AuthContext);
-
-	const logout = async () => {
-		await AsyncStorage.removeItem("user");
-		setIsLoggedIn(false);
-	};
-
+	const [recipes, setRecipes] = useState([]);
+	const [refreshing, setRefreshing] = useState(true);
+	const [favoriteRecipes, setFavoriteRecipes] = useState([]);
 	const getData = async () => {
 		try {
 			const jsonValue = await AsyncStorage.getItem("user");
-			console.log(jsonValue !== null ? JSON.parse(jsonValue) : null);
 			return jsonValue != null ? JSON.parse(jsonValue) : null;
 		} catch (e) {
-			// error reading value
+			console.log(e);
 		}
 	};
 
@@ -30,176 +32,97 @@ const HomeScreen = () => {
 		});
 	}, []);
 
-	const recipes = [
-		{
-			id: 1,
-			title: "Pizza",
-			image: "https://www.simplyrecipes.com/thmb/8caxM88NgxZjz-T2aeRW3xjhzBg=/2000x1125/smart/filters:no_upscale()/__opt__aboutcom__coeus__resources__content_migration__simply_recipes__uploads__2019__09__easy-pepperoni-pizza-lead-3-8f256746d649404baa36a44d271329bc.jpg",
-			description:
-				"Pizza is a savory dish of Italian origin, consisting of a usually round, flattened base of leavened wheat-based dough topped with tomatoes, cheese, and various other ingredients (anchovies, olives, meat, etc.) baked at a high temperature, traditionally in a wood-fired oven.",
-			ingredients: [
-				{
-					id: 1,
-					name: "Dough",
-					quantity: "1",
-					unit: "kg",
-				},
-				{
-					id: 2,
-					name: "Tomato",
-					quantity: "1",
-					unit: "kg",
-				},
-				{
-					id: 3,
-					name: "Cheese",
-					quantity: "1",
-					unit: "kg",
-				},
-			],
-		},
-		{
-			id: 2,
-			title: "Pizza",
-			image: "https://www.simplyrecipes.com/thmb/8caxM88NgxZjz-T2aeRW3xjhzBg=/2000x1125/smart/filters:no_upscale()/__opt__aboutcom__coeus__resources__content_migration__simply_recipes__uploads__2019__09__easy-pepperoni-pizza-lead-3-8f256746d649404baa36a44d271329bc.jpg",
-			description:
-				"Pizza is a savory dish of Italian origin, consisting of a usually round, flattened base of leavened wheat-based dough topped with tomatoes, cheese, and various other ingredients (anchovies, olives, meat, etc.) baked at a high temperature, traditionally in a wood-fired oven.",
-			ingredients: [
-				{
-					id: 1,
-					name: "Dough",
-					quantity: "1",
-					unit: "kg",
-				},
-				{
-					id: 2,
-					name: "Tomato",
-					quantity: "1",
-					unit: "kg",
-				},
-				{
-					id: 3,
-					name: "Cheese",
-					quantity: "1",
-					unit: "kg",
-				},
-			],
-		},
-		{
-			id: 3,
-			title: "Pizza",
-			image: "https://www.simplyrecipes.com/thmb/8caxM88NgxZjz-T2aeRW3xjhzBg=/2000x1125/smart/filters:no_upscale()/__opt__aboutcom__coeus__resources__content_migration__simply_recipes__uploads__2019__09__easy-pepperoni-pizza-lead-3-8f256746d649404baa36a44d271329bc.jpg",
-			description:
-				"Pizza is a savory dish of Italian origin, consisting of a usually round, flattened base of leavened wheat-based dough topped with tomatoes, cheese, and various other ingredients (anchovies, olives, meat, etc.) baked at a high temperature, traditionally in a wood-fired oven.",
-			ingredients: [
-				{
-					id: 1,
-					name: "Dough",
-					quantity: "1",
-					unit: "kg",
-				},
-				{
-					id: 2,
-					name: "Tomato",
-					quantity: "1",
-					unit: "kg",
-				},
-				{
-					id: 3,
-					name: "Cheese",
-					quantity: "1",
-					unit: "kg",
-				},
-			],
-		},
-		{
-			id: 4,
-			title: "Pizza",
-			image: "https://www.simplyrecipes.com/thmb/8caxM88NgxZjz-T2aeRW3xjhzBg=/2000x1125/smart/filters:no_upscale()/__opt__aboutcom__coeus__resources__content_migration__simply_recipes__uploads__2019__09__easy-pepperoni-pizza-lead-3-8f256746d649404baa36a44d271329bc.jpg",
-			description:
-				"Pizza is a savory dish of Italian origin, consisting of a usually round, flattened base of leavened wheat-based dough topped with tomatoes, cheese, and various other ingredients (anchovies, olives, meat, etc.) baked at a high temperature, traditionally in a wood-fired oven.",
-			ingredients: [
-				{
-					id: 1,
-					name: "Dough",
-					quantity: "1",
-					unit: "kg",
-				},
-				{
-					id: 2,
-					name: "Tomato",
-					quantity: "1",
-					unit: "kg",
-				},
-				{
-					id: 3,
-					name: "Cheese",
-					quantity: "1",
-					unit: "kg",
-				},
-			],
-		},
-		{
-			id: 5,
-			title: "Pizza",
-			image: "https://www.simplyrecipes.com/thmb/8caxM88NgxZjz-T2aeRW3xjhzBg=/2000x1125/smart/filters:no_upscale()/__opt__aboutcom__coeus__resources__content_migration__simply_recipes__uploads__2019__09__easy-pepperoni-pizza-lead-3-8f256746d649404baa36a44d271329bc.jpg",
-			description:
-				"Pizza is a savory dish of Italian origin, consisting of a usually round, flattened base of leavened wheat-based dough topped with tomatoes, cheese, and various other ingredients (anchovies, olives, meat, etc.) baked at a high temperature, traditionally in a wood-fired oven.",
-			ingredients: [
-				{
-					id: 1,
-					name: "Dough",
-					quantity: "1",
-					unit: "kg",
-				},
-				{
-					id: 2,
-					name: "Tomato",
-					quantity: "1",
-					unit: "kg",
-				},
-				{
-					id: 3,
-					name: "Cheese",
-					quantity: "1",
-					unit: "kg",
-				},
-			],
-		},
-		{
-			id: 6,
-			title: "Pizza",
-			image: "https://www.simplyrecipes.com/thmb/8caxM88NgxZjz-T2aeRW3xjhzBg=/2000x1125/smart/filters:no_upscale()/__opt__aboutcom__coeus__resources__content_migration__simply_recipes__uploads__2019__09__easy-pepperoni-pizza-lead-3-8f256746d649404baa36a44d271329bc.jpg",
-			description:
-				"Pizza is a savory dish of Italian origin, consisting of a usually round, flattened base of leavened wheat-based dough topped with tomatoes, cheese, and various other ingredients (anchovies, olives, meat, etc.) baked at a high temperature, traditionally in a wood-fired oven.",
-			ingredients: [
-				{
-					id: 1,
-					name: "Dough",
-					quantity: "1",
-					unit: "kg",
-				},
-				{
-					id: 2,
-					name: "Tomato",
-					quantity: "1",
-					unit: "kg",
-				},
-				{
-					id: 3,
-					name: "Cheese",
-					quantity: "1",
-					unit: "kg",
-				},
-			],
-		},
-	];
+	useEffect(() => {
+		loadRecipesData();
+	}, []);
+
+	const loadRecipesData = () => {
+		getRandomRecipes()
+			.then((res) => {
+				setRecipes(res);
+				setRefreshing(false);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+		getFavorites(user?._id)
+			.then((res) => {
+				setFavoriteRecipes(res);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	const loadFavoritesData = () => {
+		getFavorites(user?._id)
+			.then((res) => {
+				setFavoriteRecipes(res);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	const isFavorite = (recipe) => {
+		return (
+			favoriteRecipes.length > 0 &&
+			favoriteRecipes.some((f) => f._id === recipe._id)
+		);
+	};
+
+	const addFavoriteRecipe = (recipeId) => {
+		addFavorite(recipeId)
+			.then(() => {
+				loadFavoritesData();
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	const removeFavoriteRecipe = (recipeId) => {
+		removeFavorite(recipeId)
+			.then(() => {
+				loadFavoritesData();
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
 
 	return (
 		<View style={styles.container}>
-			<ScrollView>
+			<ScrollView
+				refreshControl={
+					<RefreshControl
+						refreshing={refreshing}
+						onRefresh={loadRecipesData}
+					/>
+				}
+			>
 				{recipes.map((recipe) => (
-					<Recipe key={recipe.id} {...recipe} />
+					<View key={recipe._id}>
+						<Recipe key={recipe._id} recipe={recipe} />
+						<IconButton
+							icon="heart"
+							color={isFavorite(recipe) ? "red" : "black"}
+							size={30}
+							onPress={() =>
+								!isFavorite(recipe)
+									? addFavoriteRecipe(recipe._id)
+									: removeFavoriteRecipe(recipe._id)
+							}
+						/>
+						<IconButton
+							icon="open-in-new"
+							color="black"
+							size={30}
+							onPress={() => {
+								navigation.navigate("Single", { recipe });
+							}}
+						/>
+					</View>
 				))}
 			</ScrollView>
 		</View>

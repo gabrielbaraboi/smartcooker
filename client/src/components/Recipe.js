@@ -1,40 +1,31 @@
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { IconButton, Text } from "react-native-paper";
 
-export default function Recipe(recipe) {
+const Recipe = ({ recipe }) => {
 	return (
 		<View style={styles.recipe}>
-			<Text style={styles.title}>{recipe.title}</Text>
-			<Image source={{ uri: recipe.image }} style={styles.image} />
-			<Text style={styles.description}>
-				{recipe.description.slice(0, 50)}
-			</Text>
-			<IngredientsList ingredients={recipe.ingredients} />
+			<Text style={styles.title}>{recipe?.title}</Text>
+			<Text style={styles.desc}>{recipe?.desc}</Text>
+			<IngredientsList ingredients={recipe?.ingredients} />
 		</View>
 	);
-}
+};
 
 function IngredientsList({ ingredients }) {
 	return (
 		<View style={styles.ingredients}>
-			{ingredients.map((ingredient) => (
-				<Ingredient key={ingredient.id} {...ingredient} />
-			))}
+			{ingredients &&
+				ingredients.map((ingredient, index) => (
+					<Text style={styles.ingredientName} key={index}>
+						{ingredient}
+					</Text>
+				))}
 		</View>
 	);
 }
 
-function Ingredient({ name, quantity, unit }) {
-	return (
-		<View style={styles.ingredient}>
-			<Text style={styles.ingredientName}>{name}</Text>
-			<Text style={styles.ingredientQuantity}>
-				{quantity} {unit}
-			</Text>
-		</View>
-	);
-}
+export default Recipe;
 
 const styles = StyleSheet.create({
 	image: {

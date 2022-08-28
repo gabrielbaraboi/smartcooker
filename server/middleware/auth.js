@@ -10,6 +10,11 @@ const auth = (req, res, next) => {
 	try {
 		const decoded = jwt.verify(token, config.TOKEN_KEY);
 		req.user = decoded;
+		if (req.user.role === "guest") {
+			return res.status(403).json({
+				message: "You are not authorized to access this resource",
+			});
+		}
 		next();
 	} catch (err) {
 		console.log(err);

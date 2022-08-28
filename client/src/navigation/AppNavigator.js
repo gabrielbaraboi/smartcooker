@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import UploadImageScreen from "../screens/UploadImageScreen";
+import SingleRecipeScreen from "../screens/SingleRecipeScreen";
 import { StyleSheet } from "react-native";
 import { theme } from "../core/theme";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -13,7 +14,7 @@ import RecommendationScreen from "../screens/RecommendationScreen";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const Home = () => {
+const HomeTabs = () => {
 	return (
 		<Tab.Navigator
 			screenOptions={({ route }) => ({
@@ -33,6 +34,7 @@ const Home = () => {
 						<Ionicons name={iconName} size={size} color={color} />
 					);
 				},
+				gestureEnabled: true,
 				tabBarActiveTintColor: "white",
 				tabBarInactiveTintColor: "white",
 				tabBarShowLabel: false,
@@ -74,15 +76,15 @@ const AppNavigator = () => {
 	return (
 		<Stack.Navigator>
 			<Stack.Screen
-				name="Home"
-				component={Home}
+				name="HomeTabs"
+				component={HomeTabs}
 				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="RecommendationScreen"
 				component={RecommendationScreen}
 			/>
-			{/* <Stack.Screen name="Settings" component={Settings} /> */}
+			<Stack.Screen name="Single" component={SingleRecipeScreen} />
 		</Stack.Navigator>
 	);
 };
