@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { AuthContext } from "../services/authentication/auth.provider";
 import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import Recipe from "../components/Recipe";
 import {
@@ -10,7 +9,8 @@ import {
 	getRandomRecipes,
 	removeFavorite,
 } from "../services/recipeService";
-import { IconButton, Text } from "react-native-paper";
+import { Button, IconButton, Text } from "react-native-paper";
+import { theme } from "../core/theme";
 
 const HomeScreen = ({ navigation }) => {
 	const [user, setUser] = useState({});
@@ -102,26 +102,36 @@ const HomeScreen = ({ navigation }) => {
 				}
 			>
 				{recipes.map((recipe) => (
-					<View key={recipe._id}>
+					<View key={recipe._id} style={styles.recipe}>
 						<Recipe key={recipe._id} recipe={recipe} />
-						<IconButton
-							icon="heart"
-							color={isFavorite(recipe) ? "red" : "black"}
-							size={30}
-							onPress={() =>
-								!isFavorite(recipe)
-									? addFavoriteRecipe(recipe._id)
-									: removeFavoriteRecipe(recipe._id)
-							}
-						/>
-						<IconButton
-							icon="open-in-new"
-							color="black"
-							size={30}
-							onPress={() => {
-								navigation.navigate("Single", { recipe });
-							}}
-						/>
+						<View style={styles.buttons}>
+							{user.role !== "guest" && (
+								<IconButton
+									icon="heart"
+									color={
+										isFavorite(recipe)
+											? theme.colors.primary
+											: theme.colors.secondary
+									}
+									size={30}
+									onPress={() =>
+										!isFavorite(recipe)
+											? addFavoriteRecipe(recipe._id)
+											: removeFavoriteRecipe(recipe._id)
+									}
+								/>
+							)}
+							<Button
+								icon="open-in-new"
+								color="white"
+								onPress={() => {
+									navigation.navigate("Recipe", { recipe });
+								}}
+								style={styles.button}
+							>
+								View
+							</Button>
+						</View>
 					</View>
 				))}
 			</ScrollView>
@@ -132,6 +142,33 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
 	container: {
 		height: "85%",
+		width: "100%",
+		alignContent: "center",
+	},
+	recipe: {
+		flexBasis: "22%",
+		margin: 5,
+		padding: 5,
+		paddingLeft: 10,
+		paddingRight: 10,
+		backgroundColor: "white",
+		borderRadius: 10,
+		shadowColor: "#00000030",
+		shadowOffset: {
+			width: 0,
+			height: 10,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 3.5,
+		elevation: 5,
+	},
+	buttons: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+	},
+	button: {
+		backgroundColor: theme.colors.primary,
 	},
 });
 

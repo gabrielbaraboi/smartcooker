@@ -1,21 +1,20 @@
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 import {
-	Button,
-	Image,
 	Linking,
 	ScrollView,
 	StyleSheet,
 	Text,
 	View,
 	Modal,
-	Pressable,
 	Picker,
 } from "react-native";
+import { Button } from "react-native-paper";
 import { getIngredients } from "../services/ingredientService";
 import PredictedElement from "../components/PredictedElement";
 import { predict } from "../services/predictionService";
 import { IconButton } from "react-native-paper";
+import { theme } from "../core/theme";
 
 function VisionScreen({ navigation }) {
 	const [images, setImages] = useState([]);
@@ -37,17 +36,20 @@ function VisionScreen({ navigation }) {
 
 	const takePictureAsync = async () => {
 		const { cancelled, uri, base64 } = await ImagePicker.launchCameraAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			quality: 1,
 			base64: true,
 		});
 		if (!cancelled) {
 			setImages((images) => [...images, uri]);
 			try {
 				const result = await predict(base64);
-				setStatuses((statuses) => [...statuses, result]);
 				setPredictions((predictions) => [...predictions, result]);
 			} catch (error) {
 				console.log(error);
 			}
+		} else {
+			setImages(images.slice(0, -1));
 		}
 	};
 
@@ -165,25 +167,39 @@ function VisionScreen({ navigation }) {
 				)}
 			</ScrollView>
 			<View style={styles.imageButtons}>
-				<Button onPress={takePictureAsync} title="Take" />
-				<Button onPress={pickImage} title="Select" />
 				<Button
+					onPress={takePictureAsync}
+					style={styles.button}
+					color="white"
+				>
+					Take
+				</Button>
+				<Button onPress={pickImage} style={styles.button} color="white">
+					Select
+				</Button>
+				<Button
+					color="white"
+					style={styles.button}
 					onPress={() => {
 						setImages([]);
 						setPredictions([]);
 					}}
-					title="Clear"
 					disabled={predictions.length === 0}
-				/>
+				>
+					Clear
+				</Button>
 				<Button
+					color="white"
+					style={styles.button}
 					onPress={() =>
-						navigation.navigate("RecommendationScreen", {
+						navigation.navigate("Recommended Recipes", {
 							predictions: addPredictionsToArray(),
 						})
 					}
-					title="Search"
 					disabled={predictions.length === 0}
-				/>
+				>
+					Search
+				</Button>
 			</View>
 		</View>
 	);
@@ -259,6 +275,10 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "space-between",
 		margin: 10,
+		color: "white",
+	},
+	button: {
+		backgroundColor: theme.colors.primary,
 	},
 	text: {
 		fontSize: 20,

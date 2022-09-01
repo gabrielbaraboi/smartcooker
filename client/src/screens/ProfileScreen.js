@@ -7,7 +7,7 @@ import Button from "../components/Button";
 import Paragraph from "../components/Paragraph";
 import { AuthContext } from "../services/authentication/auth.provider";
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
 	const [user, setUser] = useState({});
 	const { setIsLoggedIn } = useContext(AuthContext);
 
@@ -36,7 +36,17 @@ const ProfileScreen = () => {
 			<Paragraph>
 				Hello, {user?.username} {"\n"} Role: {user?.role}
 			</Paragraph>
-			<Button mode="outlined" onPress={logout}>
+			{user?.role !== "guest" && (
+				<Button
+					mode="outlined"
+					onPress={() => {
+						navigation.navigate("Favorite Recipes");
+					}}
+				>
+					Favorite Recipes
+				</Button>
+			)}
+			<Button mode="contained" onPress={logout}>
 				Logout
 			</Button>
 		</Background>

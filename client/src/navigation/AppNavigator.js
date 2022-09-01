@@ -10,6 +10,7 @@ import { StyleSheet } from "react-native";
 import { theme } from "../core/theme";
 import { createStackNavigator } from "@react-navigation/stack";
 import RecommendationScreen from "../screens/RecommendationScreen";
+import FavoriteScreen from "../screens/FavoriteScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -81,10 +82,11 @@ const AppNavigator = () => {
 				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
-				name="RecommendationScreen"
+				name="Recommended Recipes"
 				component={RecommendationScreen}
 			/>
-			<Stack.Screen name="Single" component={SingleRecipeScreen} />
+			<Stack.Screen name="Recipe" component={SingleRecipeScreen} />
+			<Stack.Screen name="Favorite Recipes" component={FavoriteScreen} />
 		</Stack.Navigator>
 	);
 };

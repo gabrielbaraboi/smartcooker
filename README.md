@@ -1,2 +1,1 @@
 # smartcooker
-Smart Cooker
